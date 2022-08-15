@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:my_kec/widgets/loginandsignup.dart';
 
-class AuthenticationScreen extends StatelessWidget {
+class AuthenticationScreen extends StatefulWidget {
   VoidCallback func;
-  AuthenticationScreen({Key? key,required this.func}) : super(key: key);
+  AuthenticationScreen({Key? key, required this.func}) : super(key: key);
+
+  @override
+  State<AuthenticationScreen> createState() => _AuthenticationScreenState();
+}
+
+class _AuthenticationScreenState extends State<AuthenticationScreen> {
+  bool isLogin = true;
+  void changeMode(bool v) {
+    setState(() {
+      isLogin = v;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +24,7 @@ class AuthenticationScreen extends StatelessWidget {
         body: Center(
           child: Stack(
             children: [
-              LoginandSignup(func:func),
+              LoginandSignup(func: widget.func, isLogin: changeMode),
               Align(
                   alignment: Alignment.topCenter,
                   child: Container(
@@ -23,7 +35,9 @@ class AuthenticationScreen extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    margin: const EdgeInsets.only(top: 100),
+                    margin: isLogin
+                        ? const EdgeInsets.only(top: 150)
+                        : const EdgeInsets.only(top: 70),
                     child: CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.white,

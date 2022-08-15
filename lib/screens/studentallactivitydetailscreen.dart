@@ -4,11 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../widgets/progress.dart';
+
+// ignore: must_be_immutable
 class StudentAllActivityDetailsScreeen extends StatefulWidget {
-  String rollNumber;
-  StudentAllActivityDetailsScreeen({Key? key, required this.rollNumber})
+  String rollNumber, semester, pageKey;
+  StudentAllActivityDetailsScreeen(
+      {Key? key,
+      required this.rollNumber,
+      required this.semester,
+      required this.pageKey})
       : super(key: key);
 
   @override
@@ -41,7 +49,11 @@ class _StudentAllActivityDetailsScreeenState
     final response = await http.post(
         Uri.https("mykecerode.000webhostapp.com",
             "AppApi/Staff/getstudentallsapdetail.php"),
-        body: {'rollNumber': widget.rollNumber, 'studentBatch': studentBatch});
+        body: {
+          'rollNumber': widget.rollNumber,
+          'studentBatch': studentBatch,
+          'semester': widget.semester
+        });
     return jsonDecode(response.body);
   }
 
@@ -92,20 +104,28 @@ class _StudentAllActivityDetailsScreeenState
             ElevatedButton(
                 child: const Text("YES"),
                 onPressed: () async {
-                  // final doc = await FirebaseFirestore.instance
-                  //     .collection('staffs')
-                  //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                  //     .get();
-                  // final data = doc.data() as Map<String, dynamic>;
-                  // await FirebaseFirestore.instance
-                  //     .collection('Sap')
-                  //     .doc(data['stuyear'])
-                  //     .collection(data['department'])
-                  //     .doc(data['section'])
-                  //     .collection(widget.roll)
-                  //     .doc(id)
-                  //     .update({'allotedmark': tc.text});
-                  // Navigator.pop(context);
+                  Navigator.of(ctx).pop();
+                  Navigator.of(ctx).pop();
+                  final pref = await SharedPreferences.getInstance();
+                  String studentBatch =
+                      pref.getString('studentBatch') as String;
+                  final response = await http.post(
+                      Uri.https("mykecerode.000webhostapp.com",
+                          "AppApi/Staff/allocatemark.php"),
+                      body: {
+                        'point': controller.text,
+                        'studentBatch': studentBatch,
+                        'sapid': id,
+                        'stateOfProcess': '1'
+                      });
+                  if (response.body.contains('Success')) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Point Allocation successfull')));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Something Gone wrong')));
+                  }
+
                   setState(() {});
                 }),
             ElevatedButton(
@@ -255,11 +275,13 @@ class _StudentAllActivityDetailsScreeenState
                                 width: 120,
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          bottomsheet(list[index]['sapId']);
-                                        },
-                                        icon: const Icon(Icons.edit)),
+                                    widget.pageKey == '1'
+                                        ? IconButton(
+                                            onPressed: () {
+                                              bottomsheet(list[index]['sapId']);
+                                            },
+                                            icon: const Icon(Icons.edit))
+                                        : const Spacer(),
                                     ElevatedButton(
                                         onPressed: () {
                                           try {
@@ -292,46 +314,6 @@ class _StudentAllActivityDetailsScreeenState
           );
         },
       ),
-    );
-  }
-}
-
-class Progress extends StatelessWidget {
-  const Progress({
-    Key? key,
-    required this.totalScore,
-    required this.divisor,
-  }) : super(key: key);
-
-  final int totalScore;
-  final int divisor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        CircularPercentIndicator(
-          radius: 50,
-          percent: totalScore > divisor ? 1 : totalScore / divisor,
-          center: Text(
-            '$totalScore',
-            style: const TextStyle(fontSize: 40),
-          ),
-          animation: true,
-          progressColor: Colors.green,
-          backgroundColor: const Color.fromARGB(255, 223, 212, 212),
-          circularStrokeCap: CircularStrokeCap.round,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Max Score : $divisor'),
-            Text(
-                'Needed points : ${(divisor - totalScore) < 0 ? 0 : divisor - totalScore}'),
-          ],
-        ),
-      ],
     );
   }
 }

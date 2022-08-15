@@ -16,6 +16,8 @@ class AllStudentsSAP extends StatefulWidget {
 class _AllStudentsSAPState extends State<AllStudentsSAP> {
   String search = '';
   String filterValue = '1';
+  String semester = '';
+  String key = '1';
   List<DropdownMenuItem<String>> sort = const [
     DropdownMenuItem(value: "1", child: Text("RollNumber")),
     DropdownMenuItem(value: "2", child: Text("RollNumber reverse")),
@@ -25,7 +27,12 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
 
   Future<List<dynamic>> getstaffData() async {
     final pref = await SharedPreferences.getInstance();
-    String semester = pref.getString('semester') as String;
+    String staffId = pref.getString('staffId') as String;
+    final response1 = await http.post(
+        Uri.https(
+            "mykecerode.000webhostapp.com", "AppApi/Staff/getstaffdata.php"),
+        body: {'staffId': staffId});
+    semester = jsonDecode(response1.body)[0]['currentSemester'];
     String studentBatch = pref.getString('studentBatch') as String;
     List<String> students = pref.getStringList('students') as List<String>;
     String studentList = students.join(',');
@@ -51,7 +58,7 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
                 borderRadius: BorderRadius.circular(5)),
             alignment: Alignment.centerRight,
             margin: const EdgeInsets.all(5),
-            width: MediaQuery.of(context).size.width * 0.7,
+            width: MediaQuery.of(context).size.width * 0.85,
             child: TextField(
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -97,6 +104,9 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
                         height: 50,
                         child: Row(
                           children: [
+                            SizedBox(
+                              width: 10,
+                            ),
                             const Text(
                               'Sort By  :  ',
                               style: TextStyle(fontSize: 16),
@@ -123,7 +133,12 @@ class _AllStudentsSAPState extends State<AllStudentsSAP> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (ctx) =>
-                                              StudentAllActivityDetailsScreeen(rollNumber: data[index]['studentRollNumber']))),
+                                              StudentAllActivityDetailsScreeen(
+                                                rollNumber: data[index]
+                                                    ['studentRollNumber'],
+                                                semester: semester,
+                                                pageKey: key,
+                                              ))),
                                   child: data[index]['studentRollNumber']
                                           .toString()
                                           .toLowerCase()

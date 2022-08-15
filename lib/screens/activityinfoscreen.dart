@@ -64,7 +64,6 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                       'sapid': sapid,
                       'stateOfProcess': theme == 'Approve' ? '1' : '2'
                     });
-                print(response.body);
                 if (response.body.contains('Success')) {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Point Allocation successfull')));
@@ -225,7 +224,7 @@ class _ActivityInfoScreenState extends State<ActivityInfoScreen> {
                                       ],
                                     )),
                                 SizedBox(
-                                  width: 100,
+                                  width: 110,
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(),
                                       onPressed: () {

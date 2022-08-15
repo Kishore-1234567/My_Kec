@@ -7,7 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginandSignup extends StatefulWidget {
   VoidCallback func;
-  LoginandSignup({Key? key, required this.func}) : super(key: key);
+  Function(bool) isLogin;
+  LoginandSignup({Key? key, required this.func, required this.isLogin})
+      : super(key: key);
 
   @override
   State<LoginandSignup> createState() => _LoginandSignupState();
@@ -72,7 +74,7 @@ class _LoginandSignupState extends State<LoginandSignup> {
 
   // ignore: non_constant_identifier_names
   void savePreferences(StaffEmail, passcode, staffName, designation, section,
-      currentSemester, currentYear, studentBatch, department,staffid) async {
+      currentSemester, currentYear, studentBatch, department, staffid) async {
     final pref = await SharedPreferences.getInstance();
     pref.setString('email', StaffEmail);
     pref.setString('password', passcode);
@@ -96,8 +98,6 @@ class _LoginandSignupState extends State<LoginandSignup> {
         studentList.add(i['rollNumber']);
       }
       pref.setString('section', section);
-      pref.setString('semester', currentSemester);
-      pref.setString('currentYear', currentYear);
       pref.setString('studentBatch', studentBatch);
       pref.setStringList('students', studentList);
       pref.setString('department', department);
@@ -179,8 +179,8 @@ class _LoginandSignupState extends State<LoginandSignup> {
         if (response.body == 'Something went Wrong') {
           _showErrorDialog('Something went Wrong');
         } else {
-          savePreferences(
-              email, pass, name, type, section, sem, year, stuyear, dept,staffid);
+          savePreferences(email, pass, name, type, section, sem, year, stuyear,
+              dept, staffid);
         }
       } catch (e) {
         _showErrorDialog('Something went wrong');
@@ -191,9 +191,9 @@ class _LoginandSignupState extends State<LoginandSignup> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: isLogin ? 300 : 500,
+        height: isLogin ? 340 : 700,
         padding:
-            const EdgeInsets.only(top: 55, left: 10, right: 10, bottom: 20),
+            const EdgeInsets.only(top: 50, left: 10, right: 10, bottom: 20),
         width: double.infinity,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -202,7 +202,9 @@ class _LoginandSignupState extends State<LoginandSignup> {
               color: Colors.black,
             ),
             color: Colors.white),
-        margin: const EdgeInsets.only(left: 20, right: 20, top: 150),
+        margin: isLogin
+            ? const EdgeInsets.only(left: 20, right: 20, top: 200)
+            : const EdgeInsets.only(left: 20, right: 20, top: 130),
         child: SingleChildScrollView(
           child: Form(
               key: _fkey,
@@ -283,6 +285,7 @@ class _LoginandSignupState extends State<LoginandSignup> {
                                 onPressed: () {
                                   setState(() {
                                     isLogin = false;
+                                    widget.isLogin(false);
                                   });
                                 },
                                 child: const Text('Create an Account')),
@@ -570,6 +573,7 @@ class _LoginandSignupState extends State<LoginandSignup> {
                             onPressed: () {
                               setState(() {
                                 isLogin = true;
+                                widget.isLogin(true);
                               });
                             },
                             child: const Text('Login to existing account')),

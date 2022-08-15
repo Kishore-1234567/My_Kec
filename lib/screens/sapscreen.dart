@@ -18,10 +18,15 @@ class _SapScreenState extends State<SapScreen> {
   Future<List<dynamic>> getstaffData() async {
     final pref = await SharedPreferences.getInstance();
     String studentYear = pref.getString('studentBatch') as String;
-    String semester = pref.getString('semester') as String;
+    String staffId = pref.getString('staffId') as String;
+    final response1 = await http.post(
+        Uri.https(
+            "mykecerode.000webhostapp.com", "AppApi/Staff/getstaffdata.php"),
+        body: {'staffId': staffId});
+    String semester = jsonDecode(response1.body)[0]['currentSemester'];
     List<String> students = pref.getStringList('students') as List<String>;
     String studentList = students.join(',');
-    final response = await http.post(
+    final response2 = await http.post(
         Uri.https(
             "mykecerode.000webhostapp.com", "AppApi/Staff/getwaitingsap.php"),
         body: {
@@ -29,7 +34,7 @@ class _SapScreenState extends State<SapScreen> {
           'semester': semester,
           'studentList': studentList
         });
-    return jsonDecode(response.body);
+    return jsonDecode(response2.body);
   }
 
   @override

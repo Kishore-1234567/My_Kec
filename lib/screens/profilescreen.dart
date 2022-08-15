@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import '../widgets/staffdetails.dart';
+import '../widgets/studentlistgridview.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -10,16 +16,23 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final style = const TextStyle(fontSize: 18);
+
   Future<Map<String, dynamic>> getStaffDetails() async {
     final pref = await SharedPreferences.getInstance();
+    String staffId = pref.getString('staffId') as String;
+    final response1 = await http.post(
+        Uri.https(
+            "mykecerode.000webhostapp.com", "AppApi/Staff/getstaffdata.php"),
+        body: {'staffId': staffId});
+    String semester = jsonDecode(response1.body)[0]['currentSemester'];
     return {
       'staffId': pref.getString('staffId') as String,
       'name': pref.getString('name') as String,
       'email': pref.getString('email') as String,
       'department': pref.getString('department') as String,
-      'currentYear': pref.getString('currentYear') as String,
+      'currentYear': (int.parse(semester) / 2).ceil(),
       'studentBatch': pref.getString('studentBatch') as String,
-      'semester': pref.getString('semester') as String,
+      'semester': semester,
       'section': pref.getString('section') as String,
       'students': pref.getStringList('students') as List
     };
@@ -31,64 +44,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         future: getStaffDetails(),
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
-            print(snapshot.data);
             final data = snapshot.data as Map<String, dynamic>;
             return Column(
               children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 20),
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'ID ',
-                            style: style,
-                          ),
-                          Text('Name ', style: style),
-                          Text('Email ', style: style),
-                          Text('Department ', style: style),
-                          Text('CurrentYear ', style: style),
-                          Text('Semester ', style: style),
-                          Text('Section ', style: style),
-                          Text('StudentBatch ', style: style),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(': ${data['staffId']}', style: style),
-                          Text(': ${data['name']}', style: style),
-                          Text(': ${data['email']}', style: style),
-                          Text(': ${data['department']}', style: style),
-                          Text(': ${data['currentYear']}', style: style),
-                          Text(': ${data['semester']}', style: style),
-                          Text(': ${data['section']}', style: style),
-                          Text(': ${data['studentBatch']}', style: style),
-                        ],
-                      )
-                    ],
+                const SizedBox(
+                  height: 20,
+                  child: Text(
+                    'Your Details',
+                    style: TextStyle(fontSize: 20, color: Colors.blue),
                   ),
                 ),
-                SizedBox(
-                  height: 200,
-                  child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      itemCount: data['students'].length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          elevation: 5,
-                          child: Text(data['students'][index]),
-                        );
-                      }),
-                )
+                Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  height: MediaQuery.of(context).size.height * 0.23,
+                  child: StaffDetails(style: style, data: data),
+                ),
+                const SizedBox(
+                  height: 20,
+                  child: Text(
+                    'Student List',
+                    style: TextStyle(fontSize: 20, color: Colors.blue),
+                  ),
+                ),
+                Expanded(child: StudentListGridview(data: data)),
               ],
             );
           } else if (snapshot.hasData) {

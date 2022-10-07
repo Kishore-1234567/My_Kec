@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_kec/api/apis.dart';
 import 'package:my_kec/screens/studentallactivitydetailscreen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -11,17 +12,13 @@ class StudentInfoScreen extends StatelessWidget {
   StudentInfoScreen({Key? key, required this.rollNumber}) : super(key: key);
 
   Future<Map<String, List>> getStudenData() async {
-    final response1 = await http.post(
-        Uri.https(
-            'mykecerode.000webhostapp.com', '/AppApi/Staff/getstudentdata.php'),
+    final response1 = await http.post(Uri.https(DOMAIN_NAME, GETSTUDENTDATA),
         body: {'rollNumber': rollNumber});
-    final response = await http.post(
-        Uri.https('mykecerode.000webhostapp.com',
-            '/AppApi/Staff/getallsemsapdata.php'),
-        body: {
-          'rollNumber': rollNumber,
-          'studentBatch': jsonDecode(response1.body)[0]['studentBatch']
-        });
+    final response =
+        await http.post(Uri.https(DOMAIN_NAME, GETALLSEMSAPDATA), body: {
+      'rollNumber': rollNumber,
+      'studentBatch': jsonDecode(response1.body)[0]['studentBatch']
+    });
     return {
       'studentDetail': jsonDecode(response1.body),
       'sapDetail': jsonDecode(response.body),
@@ -34,7 +31,7 @@ class StudentInfoScreen extends StatelessWidget {
         appBar: AppBar(
           title: Column(
             children: [
-              Text(rollNumber),
+              Text(rollNumber, style: const TextStyle(color: Colors.black)),
             ],
           ),
         ),
@@ -53,7 +50,8 @@ class StudentInfoScreen extends StatelessWidget {
                           fontSize: 20, overflow: TextOverflow.clip),
                     ),
                   ),
-                  SizedBox(
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     height: MediaQuery.of(context).size.height * 0.85,
                     child: ListView.builder(
                         itemCount: data['sapDetail'].length,
@@ -95,7 +93,8 @@ class StudentInfoScreen extends StatelessWidget {
                   )
                 ],
               );
-            } else if (snapshot.hasError) {
+            }
+            if (snapshot.hasError) {
               return const Center(
                 child: Text('Somthing gone wrong'),
               );

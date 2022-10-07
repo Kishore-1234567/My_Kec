@@ -50,6 +50,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "crypto",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.5",
       "packageUri": "lib/",
@@ -75,9 +81,45 @@
     },
     {
       "name": "file",
-      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/file-6.1.2",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/file-6.1.4",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "firebase_core",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.21.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_core_platform_interface",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_platform_interface-4.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_core_web",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.7.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_messaging",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_messaging-12.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_messaging_platform_interface",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_messaging_platform_interface-4.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "firebase_messaging_web",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_messaging_web-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
     },
     {
       "name": "flutter",
@@ -213,7 +255,7 @@
     },
     {
       "name": "path_provider_windows",
-      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-2.1.1",
+      "rootUri": "file:///D:/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-2.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -410,7 +452,7 @@
       "languageVersion": "2.17"
     }
   ],
-  "generated": "2022-08-09T08:10:47.013007Z",
+  "generated": "2022-08-25T15:57:11.749065Z",
   "generator": "pub",
   "generatorVersion": "2.17.5"
 }

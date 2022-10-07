@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:my_kec/screens/profilescreen.dart';
+import 'package:my_kec/widgets/logout.dart';
 import '/screens/allstudentsap.dart';
 import '/screens/home.dart';
 import '/screens/sapscreen.dart';
@@ -38,7 +39,7 @@ class _TabScreenState extends State<TabScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_pageList[_selectedIndex]['title'] as String),
+        title: Text(_pageList[_selectedIndex]['title'] as String,style:const TextStyle(color: Colors.black)),
         actions: designation == '1'
             ? _selectedIndex == 2
                 ? [Logout(widget: widget)]
@@ -73,9 +74,9 @@ class _TabScreenState extends State<TabScreen> {
                     animationDuration: const Duration(milliseconds: 200),
                     animationCurve: Curves.easeInCirc,
                     items: const [
-                      Icon(Icons.card_membership),
-                      Icon(Icons.home),
-                      Icon(Icons.account_circle),
+                      Icon(Icons.card_membership,color: Colors.black,),
+                      Icon(Icons.home,color: Colors.black,),
+                      Icon(Icons.account_circle,color: Colors.black),
                     ],
                     onTap: (i) {
                       setState(() {
@@ -89,22 +90,4 @@ class _TabScreenState extends State<TabScreen> {
   }
 }
 
-class Logout extends StatelessWidget {
-  const Logout({
-    Key? key,
-    required this.widget,
-  }) : super(key: key);
 
-  final TabScreen widget;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: () async {
-          final pref = await SharedPreferences.getInstance();
-          pref.clear();
-          widget.func();
-        },
-        icon: const Icon(Icons.logout));
-  }
-}

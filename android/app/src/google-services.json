@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "347169541676",
+    "firebase_url": "https://my-kec-default-rtdb.firebaseio.com",
+    "project_id": "my-kec",
+    "storage_bucket": "my-kec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347169541676:android:c897ef2dac77d6f335cb89",
+        "android_client_info": {
+          "package_name": "com.example.my_kec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347169541676-3m0ij8uq8cjno9f2ubuj8midbhdmmkln.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiRbTnwwPpHMKwkIc6cVVQ_dYscCZ17ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347169541676-3m0ij8uq8cjno9f2ubuj8midbhdmmkln.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "347169541676-sqqsfqt4jtop05pufjoktlk121lh32n7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myKec"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

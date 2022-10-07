@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_kec/widgets/loginandsignup.dart';
+import 'package:my_kec/widgets/login.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   VoidCallback func;
@@ -11,20 +11,16 @@ class AuthenticationScreen extends StatefulWidget {
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   bool isLogin = true;
-  void changeMode(bool v) {
-    setState(() {
-      isLogin = v;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.cyan,
         body: Center(
           child: Stack(
             children: [
-              LoginandSignup(func: widget.func, isLogin: changeMode),
+              LoginandSignup(func: widget.func),
               Align(
                   alignment: Alignment.topCenter,
                   child: Container(
@@ -35,9 +31,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    margin: isLogin
-                        ? const EdgeInsets.only(top: 150)
-                        : const EdgeInsets.only(top: 70),
+                    margin: const EdgeInsets.only(top: 150),
                     child: CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.white,

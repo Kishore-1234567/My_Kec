@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:my_kec/api/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -46,14 +46,12 @@ class _StudentAllActivityDetailsScreeenState
 
   Future<List<dynamic>> getDetailOfSAP() async {
     String studentBatch = "20${widget.rollNumber.substring(0, 2)}";
-    final response = await http.post(
-        Uri.https("mykecerode.000webhostapp.com",
-            "AppApi/Staff/getstudentallsapdetail.php"),
-        body: {
-          'rollNumber': widget.rollNumber,
-          'studentBatch': studentBatch,
-          'semester': widget.semester
-        });
+    final response =
+        await http.post(Uri.https(DOMAIN_NAME, GETALLSTUDENTSAPDETAIL), body: {
+      'rollNumber': widget.rollNumber,
+      'studentBatch': studentBatch,
+      'semester': widget.semester
+    });
     return jsonDecode(response.body);
   }
 
@@ -109,15 +107,13 @@ class _StudentAllActivityDetailsScreeenState
                   final pref = await SharedPreferences.getInstance();
                   String studentBatch =
                       pref.getString('studentBatch') as String;
-                  final response = await http.post(
-                      Uri.https("mykecerode.000webhostapp.com",
-                          "AppApi/Staff/allocatemark.php"),
-                      body: {
-                        'point': controller.text,
-                        'studentBatch': studentBatch,
-                        'sapid': id,
-                        'stateOfProcess': '1'
-                      });
+                  final response = await http
+                      .post(Uri.https(DOMAIN_NAME, ALLOCATEMARK), body: {
+                    'point': controller.text,
+                    'studentBatch': studentBatch,
+                    'sapid': id,
+                    'stateOfProcess': '1'
+                  });
                   if (response.body.contains('Success')) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('Point Allocation successfull')));
@@ -125,7 +121,6 @@ class _StudentAllActivityDetailsScreeenState
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Something Gone wrong')));
                   }
-
                   setState(() {});
                 }),
             ElevatedButton(
@@ -150,9 +145,10 @@ class _StudentAllActivityDetailsScreeenState
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.rollNumber),
+        title: Text(widget.rollNumber,style:const TextStyle(color: Colors.black)),
       ),
       body: FutureBuilder(
         future: getDetailOfSAP(),
@@ -222,24 +218,22 @@ class _StudentAllActivityDetailsScreeenState
             return Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Progress(totalScore: totalScore, divisor: divisor)
-                    ],
-                  ),
-                ),
+                    margin: const EdgeInsets.only(top: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Progress(totalScore: totalScore, divisor: divisor)),
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Row(children: [
                     const SizedBox(child: Text('Filter  :')),
                     const Spacer(),
                     DropdownButton(
+                        dropdownColor: brightness == Brightness.dark
+                            ? const Color.fromARGB(255, 59, 59, 59)
+                            : Colors.white,
                         value: category,
-                        icon: const Icon(Icons.dns),
+                        icon: const Icon(Icons.filter_alt_sharp),
                         items: categoryList
                             .map(
                               (e) => DropdownMenuItem(
@@ -256,51 +250,54 @@ class _StudentAllActivityDetailsScreeenState
                   ]),
                 ),
                 Expanded(
-                    child: ListView.builder(
-                        itemCount: list.length,
-                        itemBuilder: (ctx, index) {
-                          return Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.black,
-                                child: Text(
-                                  list[index]['allocatedMark'],
-                                  softWrap: true,
-                                  style: const TextStyle(color: Colors.white),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: ListView.builder(
+                          itemCount: list.length,
+                          itemBuilder: (ctx, index) {
+                            return Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.black,
+                                  child: Text(
+                                    list[index]['allocatedMark'],
+                                    softWrap: true,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                title: Text(categoryList[
+                                    int.parse(list[index]['sapCategory'])]),
+                                trailing: SizedBox(
+                                  width: 120,
+                                  child: Row(
+                                    children: [
+                                      widget.pageKey == '1'
+                                          ? IconButton(
+                                              onPressed: () {
+                                                bottomsheet(list[index]['sapId']);
+                                              },
+                                              icon: const Icon(Icons.edit))
+                                          : const Spacer(),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            try {
+                                              launchUrl(Uri.parse(
+                                                  list[index]['documentLink']));
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                      content: Text(
+                                                          'Unable to open File')));
+                                            }
+                                          },
+                                          child: const Text('PDF')),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              title: Text(categoryList[
-                                  int.parse(list[index]['sapCategory'])]),
-                              trailing: SizedBox(
-                                width: 120,
-                                child: Row(
-                                  children: [
-                                    widget.pageKey == '1'
-                                        ? IconButton(
-                                            onPressed: () {
-                                              bottomsheet(list[index]['sapId']);
-                                            },
-                                            icon: const Icon(Icons.edit))
-                                        : const Spacer(),
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          try {
-                                            launchUrl(Uri.parse(
-                                                list[index]['documentLink']));
-                                          } catch (e) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(
-                                                        'Unable to open File')));
-                                          }
-                                        },
-                                        child: const Text('PDF')),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }))
+                            );
+                          }),
+                    ))
               ],
             );
           }

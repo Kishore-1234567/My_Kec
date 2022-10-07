@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:my_kec/api/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../widgets/staffdetails.dart';
@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String staffId = pref.getString('staffId') as String;
     final response1 = await http.post(
         Uri.https(
-            "mykecerode.000webhostapp.com", "AppApi/Staff/getstaffdata.php"),
+            DOMAIN_NAME, GETSTAFFDATA),
         body: {'staffId': staffId});
     String semester = jsonDecode(response1.body)[0]['currentSemester'];
     return {
@@ -66,10 +66,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 20, color: Colors.blue),
                   ),
                 ),
-                Expanded(child: StudentListGridview(data: data)),
+                Expanded(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:8),
+                  child: StudentListGridview(data: data),
+                )),
               ],
             );
-          } else if (snapshot.hasData) {
+          }
+          if (snapshot.hasError) {
             return const Center(
               child: Text('Something gone wrong'),
             );

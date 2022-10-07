@@ -1,18 +1,25 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+import 'package:my_kec/AppTheme.dart';
 import 'package:my_kec/screens/authenticate.dart';
 import 'package:my_kec/tabs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
+      darkTheme: AppTheme.darkTheme,
       home: const Mysplash()));
 }
 
@@ -32,6 +39,26 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void changeAuthState() {
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setupInteractedMessage();
+  }
+
+  Future setupInteractedMessage() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    messaging.subscribeToTopic('circular');
   }
 
   @override
@@ -84,7 +111,6 @@ class _MysplashState extends State<Mysplash> with TickerProviderStateMixin {
 
     _Wanc =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
-
     _Wani = Tween(
       begin: 0.0,
       end: 0.95,

@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../widgets/textspanwidget.dart';
+
 class EventsInfoScreen extends StatelessWidget {
   var event;
   EventsInfoScreen({required this.event, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var brightness=MediaQuery.of(context).platformBrightness;
     var coordinatorNameList = event['coordinatorName'].toString().split(',');
     var coordinatorNumberList =
         event['coordinatorNumber'].toString().split(',');
@@ -21,6 +24,7 @@ class EventsInfoScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 event['eventName'] as String,
+                style: TextStyle(color:brightness==Brightness.dark?Colors.white:Colors.black)
               ),
               background: Hero(
                 tag: event['eventName'] as String,
@@ -72,6 +76,7 @@ class EventDetail extends StatelessWidget {
             TextSpanWidget(
               heading: 'Organizer : ',
               description: event['eventOrganizer'],
+              
             ),
             const SizedBox(height: 10),
             TextSpanWidget(
@@ -139,37 +144,5 @@ class EventDetail extends StatelessWidget {
         ),
       )
     ]));
-  }
-}
-
-class TextSpanWidget extends StatelessWidget {
-  const TextSpanWidget({
-    Key? key,
-    required this.heading,
-    required this.description,
-  }) : super(key: key);
-
-  final String heading;
-  final String description;
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: const TextStyle(
-          fontSize: 16.0,
-          color: Colors.black,
-        ),
-        children: <TextSpan>[
-          TextSpan(
-              text: heading,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          TextSpan(
-            text: '\n\t\t\t\t$description',
-          ),
-        ],
-      ),
-    );
   }
 }
